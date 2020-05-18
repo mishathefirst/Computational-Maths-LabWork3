@@ -22,7 +22,7 @@ import java.util.Scanner;
 
 public class Main extends Application {
 
-    private int selectedEquation = 0, selectedMethod = 0;
+    private int selectedEquation = 0, selectedMethod = 0, selectedSystem = 0;
     private double a, b, accuracy, tmp;
     private double ni = (a - b);
 
@@ -31,9 +31,12 @@ public class Main extends Application {
         //Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
 
         Function function = new Function();
+        SystemOfEquations systemOfEquations = new SystemOfEquations();
         ListOfFunctions listOfFunctions = new ListOfFunctions();
+        ListOfSystems listOfSystems = new ListOfSystems();
         HalfDivisionMethod hDMethod = new HalfDivisionMethod();
         TangentialMethod tMethod = new TangentialMethod();
+        IterationMethod iMethod = new IterationMethod();
 
         //TODO: PROCESSING CORRECTIONS OF USER'S INPUT
         BorderPane root = new BorderPane();
@@ -41,6 +44,7 @@ public class Main extends Application {
 
         //user interaction
 
+        //simple equations
         //buttons
         Label labelEqMethodChoice = new Label("Solve an equation: ");
         Button button1 = new Button();
@@ -116,8 +120,84 @@ public class Main extends Application {
                 labelLow, lowerLimitField, labelAccuracy, accuracyField, applyButton, outputLabel, numPartitionsLabel);
 
 
+
+        //___________________________________________________________
+
+
+
+        //System of equations interface
+        //buttons
+        Label labelSysEqIntro = new Label("Solve a system of equations.");
+
+
+        //Radio-buttons
+        Label labelSysEqNumber = new Label("Choose the system to be solved: ");
+        RadioButton firstSysEquationChoice = new RadioButton(listOfSystems.get11FunctionAsString()
+                + "\n" + listOfSystems.get12FunctionAsString());
+        RadioButton secondSysEquationChoice = new RadioButton(listOfSystems.get21FunctionAsString()
+                + "\n" + listOfSystems.get22FunctionAsString());
+        //TODO: third system as string if needed
+        //RadioButton thirdSysEquationChoice = new RadioButton();
+
+        ToggleGroup rdBtnGroupSys = new ToggleGroup();
+        firstSysEquationChoice.setToggleGroup(rdBtnGroupSys);
+        secondSysEquationChoice.setToggleGroup(rdBtnGroupSys);
+        //thirdSysEquationChoice.setToggleGroup(rdBtnGroupSys);
+
+        firstSysEquationChoice.setOnAction(event -> {
+            selectedSystem = 1;
+        });
+
+        secondSysEquationChoice.setOnAction(event -> {
+            selectedSystem = 2;
+        });
+
+        //thirdSysEquationChoice.setOnAction(event -> {
+        //selectedSystem = 3;
+        //});
+
+
+        FlowPane sysEqGroup = new FlowPane(Orientation.VERTICAL);
+        sysEqGroup.getChildren().addAll(firstSysEquationChoice, secondSysEquationChoice);
+
+        //text fields
+
+        Label labelXUp = new Label("Upper limit of the interval of X: ");
+        TextField upperXLimitField = new TextField();
+        Label labelXLow = new Label("Lower limit of the interval of X: ");
+        TextField lowerXLimitField = new TextField();
+        Label labelSysAccuracy = new Label("Accuracy: ");
+        TextField sysAccuracyField = new TextField();
+
+        Button buttonSysApply = new Button();
+        buttonSysApply.setText("Apply");
+        Label sysOutputLabel = new Label();
+        Label sysNumPartitionsLabel = new Label();
+
+
+        Group applySysButton = new Group(buttonSysApply);
+
+        FlowPane sysCtrlGroup = new FlowPane(Orientation.VERTICAL, labelSysEqIntro, labelSysEqNumber,
+                firstSysEquationChoice, secondSysEquationChoice,
+                //thirdSysEquationChoice,
+                labelXUp, upperXLimitField, labelXLow, lowerXLimitField, labelSysAccuracy, sysAccuracyField, applySysButton, sysOutputLabel, sysNumPartitionsLabel);
+
+
+
+
+
         BorderPane.setAlignment(ctrlGroup, Pos.CENTER_LEFT);
-        root.setLeft(ctrlGroup);
+        BorderPane.setAlignment(sysCtrlGroup, Pos.CENTER_LEFT);
+        //root.setLeft(ctrlGroup);
+
+
+
+        FlowPane generalGroup = new FlowPane(Orientation.VERTICAL, ctrlGroup, sysCtrlGroup);
+        BorderPane.setAlignment(generalGroup, Pos.CENTER_LEFT);
+        root.setLeft(generalGroup);
+
+
+        //_______________________________________________________________
 
 
         //graph
@@ -147,6 +227,10 @@ public class Main extends Application {
         //TODO: processing of the intervals that don't contain the root
 
 
+
+        //_________________________________________________
+
+
         buttonApply.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -162,7 +246,6 @@ public class Main extends Application {
                 }
 
                 series.getData().clear();
-
 
 
                     if (a != b) {
@@ -200,11 +283,63 @@ public class Main extends Application {
             }
         });
 
+
+
+        buttonSysApply.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                try{
+                    a = Double.parseDouble(upperXLimitField.getText());
+                    b = Double.parseDouble(lowerXLimitField.getText());
+                    accuracy = Double.parseDouble(sysAccuracyField.getText());
+
+                    if (a < b) {
+                        tmp = a;
+                        a = b;
+                        b = tmp;
+                    }
+
+                    series.getData().clear();
+
+
+
+                    if (a != b) {
+
+                        SystemResult result = iMethod.solve(selectedSystem, a, b, accuracy);
+                        //TODO: check the order of X1 and X2 (and rename if needed)
+                        sysOutputLabel.setText("X equals: " + result.getX1Result() + " Y equals: " + result.getX2Result());
+                        sysNumPartitionsLabel.setText("Number of partitions is: " + result.getNumberOfPartitions());
+                        //TODO: add if any warnings are needed
+                        //System.out.println(result.getWarningText());
+
+                        ni = (a - b);
+                        for (double i = 0; i <= ni; i++) {
+                            series.getData().add(new XYChart.Data((b + i), (function.getValue(selectedEquation, (b + i)))));
+                        }
+                        lineChart.getData().add(series);
+
+                    } else {
+                        sysOutputLabel.setText("The limits are equal. Change them and try once more.");
+                    }
+                }
+                catch(NumberFormatException e){
+                    sysOutputLabel.setText("Wrong format of input detected. Correct it and try once more.");
+                }
+            }
+        });
+
+
+
+
         //TODO: cleaning the lineChart to avoid multi-graph in the app
         //TODO: adaptation of the graph to displaying systems (multiple data in lineCharts)
 
 
-        
+
+
+        //______________________________________________________________
+
+
 
 
 

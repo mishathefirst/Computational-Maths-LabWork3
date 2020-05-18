@@ -1,14 +1,16 @@
 package app;
 
-public class SystemOfEquations {
+class SystemOfEquations {
 
     private int selectedSystem;
 
     private ListOfSystems listOfSystems = new ListOfSystems();
 
-    public SystemOfEquations(int selectedSystem){
+   SystemOfEquations(int selectedSystem){
         this.selectedSystem = selectedSystem;
     }
+
+    SystemOfEquations(){}
 
 
     double getFirstEquationValue(double x){
