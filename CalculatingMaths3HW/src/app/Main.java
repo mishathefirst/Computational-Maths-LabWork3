@@ -42,7 +42,7 @@ public class Main extends Application {
         //user interaction
 
         //buttons
-        Label labelEqNumber = new Label("Choose the equation to be solved: ");
+        Label labelEqMethodChoice = new Label("Solve an equation: ");
         Button button1 = new Button();
         button1.setText("Half Division Method");
         Button button2 = new Button();
@@ -67,6 +67,7 @@ public class Main extends Application {
 
 
         //Radio-buttons
+        Label labelEqNumber = new Label("Choose the equation to be solved: ");
         RadioButton firstEquationChoice = new RadioButton(listOfFunctions.getFirstFunctionAsString());
         RadioButton secondEquationChoice = new RadioButton(listOfFunctions.getSecondFunctionAsString());
         //TODO: third function as string
@@ -110,9 +111,9 @@ public class Main extends Application {
 
         Group applyButton = new Group(buttonApply);
 
-        FlowPane ctrlGroup = new FlowPane(Orientation.VERTICAL, labelEqNumber, btn1Group, btn2Group,
+        FlowPane ctrlGroup = new FlowPane(Orientation.VERTICAL, labelEqMethodChoice, btn1Group, btn2Group, labelEqNumber,
                 firstEquationChoice, secondEquationChoice, thirdEquationChoice, labelUp, upperLimitField,
-                labelLow, lowerLimitField, labelAccuracy, accuracyField, applyButton, outputLabel);
+                labelLow, lowerLimitField, labelAccuracy, accuracyField, applyButton, outputLabel, numPartitionsLabel);
 
 
         BorderPane.setAlignment(ctrlGroup, Pos.CENTER_LEFT);
@@ -149,55 +150,63 @@ public class Main extends Application {
         buttonApply.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
+                try{
                 a = Double.parseDouble(upperLimitField.getText());
                 b = Double.parseDouble(lowerLimitField.getText());
                 accuracy = Double.parseDouble(accuracyField.getText());
 
-
-                if(a < b){
+                if (a < b) {
                     tmp = a;
                     a = b;
                     b = tmp;
                 }
 
-                //series.getData().removeAll()
-
-                //alternative:
                 series.getData().clear();
-                //lineChart.getData().clear()
 
-                if (a != b) {
-                    if (selectedMethod == 1) {
-                        final EquationResult result = hDMethod.solve(selectedEquation, a, b, accuracy);
-                        outputLabel.setText("Result is: " + result.getResult());
-                        numPartitionsLabel.setText("Number of partitions is: " + result.getNumberOfPartitions());
 
-                        ni = (a - b);
-                        for (double i = 0; i <= ni; i++) {
-                            series.getData().add(new XYChart.Data((b + i), (function.getValue(selectedEquation, (b + i)))));
+
+                    if (a != b) {
+                        if (selectedMethod == 1) {
+
+                            EquationResult result = hDMethod.solve(selectedEquation, a, b, accuracy);
+                            outputLabel.setText("Result is: " + result.getResult());
+                            numPartitionsLabel.setText("Number of partitions is: " + result.getNumberOfPartitions());
+                            System.out.println(result.getWarningText());
+
+                            ni = (a - b);
+                            for (double i = 0; i <= ni; i++) {
+                                series.getData().add(new XYChart.Data((b + i), (function.getValue(selectedEquation, (b + i)))));
+                            }
+                            lineChart.getData().add(series);
                         }
-                        lineChart.getData().add(series);
-                    }
-                    if (selectedMethod == 2) {
-                        final EquationResult result = tMethod.solve(selectedEquation, a, b, accuracy);
-                        outputLabel.setText("Result is: " + result.getResult());
-                        numPartitionsLabel.setText("Number of partitions is: " + result.getNumberOfPartitions());
+                        if (selectedMethod == 2) {
+                            final EquationResult result = tMethod.solve(selectedEquation, a, b, accuracy);
+                            outputLabel.setText("Result is: " + result.getResult());
+                            numPartitionsLabel.setText("Number of partitions is: " + result.getNumberOfPartitions());
 
-                        ni = (a - b);
-                        for (double i = 0; i <= ni; i++) {
-                            series.getData().add(new XYChart.Data((b + i), (function.getValue(selectedEquation, (b + i)))));
+                            ni = (a - b);
+                            for (double i = 0; i <= ni; i++) {
+                                series.getData().add(new XYChart.Data((b + i), (function.getValue(selectedEquation, (b + i)))));
+                            }
+                            lineChart.getData().add(series);
                         }
-                        lineChart.getData().add(series);
+                    } else {
+                        outputLabel.setText("The limits are equal. Change them and try once more.");
                     }
                 }
-                else{
-                    outputLabel.setText("The limits are equal. Change them and try once more.");
+                catch(NumberFormatException e){
+                    outputLabel.setText("Wrong format of input detected. Correct it and try once more.");
                 }
             }
         });
 
         //TODO: cleaning the lineChart to avoid multi-graph in the app
         //TODO: adaptation of the graph to displaying systems (multiple data in lineCharts)
+
+
+        
+
+
 
 
         //general settings

@@ -6,12 +6,14 @@ class EquationResult {
     private long numberOfPartitions;
     private double inaccuracy;
     private String methodName;
+    private String warningText;
 
-    EquationResult(double result, long numberOfPartitions, String methodName){
+    EquationResult(double result, long numberOfPartitions, String methodName, String warningText){
         this.result = result;
         this.numberOfPartitions = numberOfPartitions;
         this.inaccuracy = inaccuracy;
         this.methodName = methodName;
+        this.warningText = warningText;
     }
 
     double getResult() {
@@ -28,6 +30,10 @@ class EquationResult {
 
     String getNameOfTheMethod(){
         return methodName;
+    }
+
+    String getWarningText(){
+        return warningText;
     }
 
 }

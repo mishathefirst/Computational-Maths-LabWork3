@@ -24,7 +24,8 @@ class TangentialMethod {
 
             if (function.getValue(selectedEquation, (lowerIntervalPoint + i)) == 0){
                 x = lowerIntervalPoint + i;
-                return new EquationResult(x, 0, "Tangential Method.");
+                //TODO: add processing of a warningFlag (instead of a " " stab in the constructor currently)
+                return new EquationResult(x, 0, "Tangential Method.", " ");
             }
 
             if (flag){
@@ -59,7 +60,8 @@ class TangentialMethod {
             numberOfPartitions++;
         }
 
-        return new EquationResult(x, numberOfPartitions, "Tangential Method.");
+        //TODO: add processing of a warningFlag (instead of a " " stab in the constructor currently)
+        return new EquationResult(x, numberOfPartitions, "Tangential Method.", " ");
     }
 
 }
