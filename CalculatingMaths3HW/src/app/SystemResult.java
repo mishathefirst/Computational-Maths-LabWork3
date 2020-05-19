@@ -7,6 +7,7 @@ class SystemResult {
     private long numberOfPartitions;
     private double inaccuracy;
     private String methodName;
+    ListOfSystems listOfSystems = new ListOfSystems();
 
     SystemResult(double resultX1, double resultX2, long numberOfPartitions, String methodName){
         this.resultX1 = resultX1;
@@ -17,10 +18,16 @@ class SystemResult {
     }
 
     double getX1Result() {
+        if (Double.isNaN(resultX1)){
+            return listOfSystems.get2X0();
+        }
         return resultX1;
     }
 
     double getX2Result() {
+        if (Double.isNaN(resultX2)){
+            return listOfSystems.get2Y0();
+        }
         return resultX2;
     }
 

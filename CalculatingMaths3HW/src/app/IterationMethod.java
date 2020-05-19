@@ -2,32 +2,159 @@ package app;
 
 class IterationMethod {
 
-    private double X1, X2, previousX1, previousX2;
-    private int n = 0;
+    SystemResult solve(int selectedSystem, double upperIntervalPointX, double lowerIntervalPointX, double accuracy){
 
-
-    SystemResult solve(int selectedSystem, double upperIntervalPointX1, double lowerIntervalPointX1, double accuracy){
+        double X, Y, previousX, previousY;
+        int n = 1;
 
         SystemOfEquations systemOfEquations = new SystemOfEquations(selectedSystem);
 
-        X1 = (upperIntervalPointX1 - lowerIntervalPointX1) / 2;
-        X2 = systemOfEquations.getSecondEquationValue(X1);
+        X = systemOfEquations.getX0();
+        Y = systemOfEquations.getY0();
+
+
+        while(n < 20000){
+            previousX = X;
+            previousY = Y;
+
+            X = systemOfEquations.getXValue(previousX, previousY);
+            Y = systemOfEquations.getYValue(previousX, previousY);
+
+            n++;
+
+            if ((Math.abs(X - previousX) <= accuracy)
+                    && (Math.abs(Y - previousY) <= accuracy)) {
+                break;
+            }
+        }
+
+
+        if (n == 20000){
+            System.out.println("Could not find the root.");
+        }
+
+        //TODO: convert this into a return statement
+        if(X == Double.POSITIVE_INFINITY || Y == Double.POSITIVE_INFINITY ||
+                X == Double.NEGATIVE_INFINITY || Y == Double.NEGATIVE_INFINITY){
+            System.out.println("Function does not converge on the interval.");
+        }
+
+
+        return new SystemResult(X, Y, n, "Iteration Method");
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+package app;
+
+class IterationMethod {
+
+    SystemResult solve(int selectedSystem, double upperIntervalPointX, double lowerIntervalPointX, double accuracy){
+
+        double X, Y, previousX, previousY;
+        int n = 0;
+
+        SystemOfEquations systemOfEquations = new SystemOfEquations(selectedSystem);
+
+        X = (upperIntervalPointX - lowerIntervalPointX) / 2;
+        Y = systemOfEquations.getPrimaryYValue(X);
+
+        System.out.println(X);
+        System.out.println(Y);
 
 
         while(true){
-            previousX1 = X1;
-            previousX2 = X2;
+            previousX = X;
+            previousY = Y;
+
+            X = systemOfEquations.getXValue(previousX, previousY);
+            Y = systemOfEquations.getYValue(previousX, previousY);
 
 
+            if (n % 50 == 0) {
+                System.out.println("X = " + X);
+                System.out.println("Y = " + Y);
+            }
 
-            if ((Math.abs(X1 - previousX1) <= accuracy)
-                    && (Math.abs(X2 - previousX2) < accuracy)) {
+            n++;
+
+            if ((Math.abs(X - previousX) <= accuracy)
+                    && (Math.abs(Y - previousY) <= accuracy)) {
                 break;
             }
         }
 
 
 
-        return new SystemResult(X1, X2, n, "Iteration Method");
+        //TODO: convert this into a return statement
+        if(X == Double.POSITIVE_INFINITY || Y == Double.POSITIVE_INFINITY ||
+                X == Double.NEGATIVE_INFINITY || Y == Double.NEGATIVE_INFINITY){
+            System.out.println("Function does not converge on the interval.");
+        }
+        else{
+            System.out.println(X);
+            System.out.println(Y);
+        }
+
+
+        return new SystemResult(X, Y, n, "Iteration Method");
     }
 }
+*/

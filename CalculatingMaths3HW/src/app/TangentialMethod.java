@@ -2,15 +2,11 @@ package app;
 
 class TangentialMethod {
 
-
-
     EquationResult solve(int selectedEquation, double upperIntervalPoint, double lowerIntervalPoint, double accuracy){
         Function function = new Function();
         boolean flag = false;
         double x, x0;
-        int numberOfPartitions = 0;
-
-        //TODO: improve the graph display in the app
+        int numberOfPartitions = 1;
 
         for (int i = 0; i < (upperIntervalPoint - lowerIntervalPoint - 1); i++){
 
@@ -24,7 +20,7 @@ class TangentialMethod {
 
             if (function.getValue(selectedEquation, (lowerIntervalPoint + i)) == 0){
                 x = lowerIntervalPoint + i;
-                return new EquationResult(x, 0, "Tangential Method.");
+                return new EquationResult(x, 0, "Tangential Method.", " ");
             }
 
             if (flag){
@@ -32,13 +28,9 @@ class TangentialMethod {
                 upperIntervalPoint = upperIntervalPoint + i;
             }
             else{
-                //return "Root not found on the interval";
-                //TODO: error warning!
+                //return new EquationResult(-99999999999.0, 0, "Tangential Method.", "Root not found on the interval");
             }
         }
-
-        //System.out.println(lowerIntervalPoint);
-        //System.out.println(upperIntervalPoint);
 
         if (function.getValue(selectedEquation, upperIntervalPoint)
                 * function.getSecondDerivative(selectedEquation, upperIntervalPoint) > 0){
@@ -59,7 +51,7 @@ class TangentialMethod {
             numberOfPartitions++;
         }
 
-        return new EquationResult(x, numberOfPartitions, "Tangential Method.");
+        return new EquationResult(x, numberOfPartitions, "Tangential Method.", " ");
     }
 
 }
