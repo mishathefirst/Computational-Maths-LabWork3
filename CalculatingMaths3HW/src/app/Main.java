@@ -248,6 +248,7 @@ public class Main extends Application {
                 series.getData().clear();
 
 
+                //TODO: remove numberOfPartitions if it doesn't work properly?
                     if (a != b) {
                         if (selectedMethod == 1) {
 
@@ -266,6 +267,7 @@ public class Main extends Application {
                             final EquationResult result = tMethod.solve(selectedEquation, a, b, accuracy);
                             outputLabel.setText("Result is: " + result.getResult());
                             numPartitionsLabel.setText("Number of partitions is: " + result.getNumberOfPartitions());
+                            System.out.println(result.getWarningText());
 
                             ni = (a - b);
                             for (double i = 0; i <= ni; i++) {

@@ -13,20 +13,30 @@ class SystemOfEquations {
     SystemOfEquations(){}
 
 
-    double getFirstEquationValue(double x){
+    double getXValue(double x, double y){
         switch(selectedSystem){
-            case(1): return listOfSystems.get11Function(x);
-            //case(2): return listOfSystems.get21Function(x);
+            case(1): return listOfSystems.getXFunction1(x, y);
+            case(2): return listOfSystems.getXFunction2(x, y);
             //case(3): return listOfSystems.get31Function(x);
             default: return 0;
         }
     }
 
-    double getSecondEquationValue(double x){
+    double getYValue(double x, double y){
         switch(selectedSystem){
-            case(1): return listOfSystems.get12Function(x);
-            //case(2): return listOfSystems.get22Function(x);
+            case(1): return listOfSystems.getYFunction1(x, y);
+            case(2): return listOfSystems.getYFunction2(x, y);
             //case(3): return listOfSystems.get32Function(x);
+            default: return 0;
+        }
+    }
+
+
+    double getPrimaryYValue(double x){
+        switch(selectedSystem){
+            case(1): return listOfSystems.getPrimaryY1(x);
+            case(2): return listOfSystems.getPrimaryY2(x);
+            //case(3): return listOfSystems.get31Function(x);
             default: return 0;
         }
     }
